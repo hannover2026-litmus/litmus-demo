@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Litmus Cloud Ecosystem</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+:root{
+  --valley:#3adb90;--lav:#9d9af8;
+  --bg:#071a1c;--panel:#0d2a2d;
+  --white:#f2f8f6;--dim:rgba(242,248,246,0.85);--faint:rgba(242,248,246,0.6);
+  --bdr:rgba(58,219,144,0.22);
+  --gold:#f0b429;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;}
+
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(58,219,144,.024) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(58,219,144,.024) 1px,transparent 1px);
+  background-size:52px 52px;
+}
+
+.page{width:100vw;height:100vh;display:flex;flex-direction:column;position:relative;z-index:1;}
+
+/* ── HEADER ── */
+.eco-hdr{
+  height:64px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 30px;
+  border-bottom:1px solid rgba(58,219,144,.12);
+  background:rgba(7,26,28,.85);backdrop-filter:blur(10px);
+  z-index:30;
+}
+.eco-hdr-left{display:flex;flex-direction:column;gap:3px;}
+.eco-hdr-title{font-size:18px;font-weight:700;color:var(--white);}
+.eco-hdr-sub{font-family:'Space Mono',monospace;font-size:8px;color:var(--faint);letter-spacing:.13em;}
+.eco-hdr-logo{height:24px;width:auto;object-fit:contain;}
+
+/* ── MAIN ── */
+.eco-main{
+  flex:1;min-height:0;
+  display:flex;align-items:center;
+  padding:12px 22px;
+  position:relative;overflow:hidden;
+}
+
+/* ── SVG ARROWS ── */
+.arrows-svg{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  pointer-events:none;overflow:visible;z-index:20;
+}
+.fl{fill:none;stroke-width:2;stroke-linecap:round;}
+.fg{stroke:var(--valley);}
+.flav{stroke:var(--lav);}
+.fgold{stroke:var(--gold);}
+.ani{stroke-dasharray:8 5;animation:dashgo 1.1s linear infinite;}
+@keyframes dashgo{to{stroke-dashoffset:-26;}}
+
+/* ── VERTICAL DASHED DIVIDER ── */
+.vdivider{
+  position:absolute;top:0;bottom:0;
+  width:1px;pointer-events:none;z-index:15;
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(242,248,246,.14) 0,rgba(242,248,246,.14) 5px,
+    transparent 5px,transparent 11px
+  );
+}
+
+/* ── FACTORY BOX ── */
+.factory-box{
+  flex:0 0 128px;
+  display:flex;flex-direction:column;
+  background:var(--panel);
+  border:1.5px solid var(--bdr);
+  border-radius:11px;overflow:hidden;
+  z-index:5;
+}
+.factory-hdr{
+  padding:7px 10px;
+  border-bottom:1px solid rgba(58,219,144,.12);
+  background:rgba(7,26,28,.55);
+  font-family:'Space Mono',monospace;font-size:8px;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--valley);text-align:center;flex-shrink:0;
+}
+.factory-list{display:flex;flex-direction:column;gap:4px;padding:7px;}
+.factory-item{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(7,26,28,.4);
+  border:1px solid rgba(58,219,144,.12);
+  border-radius:6px;padding:5px 8px;
+  font-family:'Space Mono',monospace;font-size:8px;color:var(--white);
+}
+.fi-icon{font-size:12px;width:15px;text-align:center;flex-shrink:0;}
+
+/* ── GAPS ── */
+.arr-gap{flex:0 0 52px;}
+.flex-gap{flex:1;min-width:70px;}
+
+/* ── LITMUS EDGE BOX ── */
+.edge-box{
+  flex:0 0 235px;
+  display:flex;flex-direction:column;
+  background:var(--panel);
+  border:2px solid rgba(58,219,144,.52);
+  border-radius:14px;
+  box-shadow:0 0 24px rgba(58,219,144,.07),inset 0 0 18px rgba(7,26,28,.3);
+  overflow:hidden;z-index:5;
+  align-self:stretch;
+}
+.edge-hdr{
+  display:flex;flex-direction:column;gap:5px;
+  padding:8px 12px;
+  border-bottom:1px solid rgba(58,219,144,.16);
+  background:rgba(7,26,28,.6);flex-shrink:0;
+}
+.edge-hdr-top{display:flex;align-items:center;gap:9px;}
+.edge-hdr-logo{height:19px;width:auto;object-fit:contain;}
+.edge-hdr-txt{
+  font-family:'Space Mono',monospace;font-size:7.5px;
+  color:var(--valley);letter-spacing:.18em;text-transform:uppercase;
+}
+.edge-deploy{display:flex;gap:3px;flex-wrap:wrap;}
+.deploy-pill{
+  font-family:'Space Mono',monospace;font-size:6px;
+  padding:2px 6px;border-radius:100px;
+  background:rgba(58,219,144,.07);color:var(--valley);
+  border:1px solid rgba(58,219,144,.22);white-space:nowrap;
+}
+.edge-body{
+  flex:1;display:flex;flex-direction:column;
+  padding:8px;gap:0;
+  justify-content:space-evenly;
+}
+.module-card{
+  background:rgba(7,26,28,.55);
+  border:1px solid var(--bdr);
+  border-radius:7px;padding:6px 8px;
+  display:flex;align-items:center;gap:7px;
+}
+.module-img{width:20px;height:20px;object-fit:contain;flex-shrink:0;}
+.module-lbl{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--white);line-height:1.3;}
+
+/* ── CLOUD INTEGRATIONS COLUMN ── */
+.cloud-col{
+  flex:0 0 360px;
+  display:flex;flex-direction:column;
+  background:rgba(7,26,28,.55);
+  border:1.5px solid rgba(157,154,248,.42);
+  border-radius:14px;
+  box-shadow:0 0 20px rgba(157,154,248,.06);
+  overflow:hidden;
+  z-index:5;
+  align-self:center;
+}
+.cc-hdr{
+  padding:8px 12px;
+  border-bottom:1px solid rgba(157,154,248,.2);
+  background:rgba(7,26,28,.6);
+  font-family:'Space Mono',monospace;font-size:8px;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--lav);text-align:center;flex-shrink:0;
+}
+.cc-body{
+  display:flex;flex-direction:column;gap:6px;
+  padding:8px;
+}
+
+/* Cloud integration cards */
+.ci-card{
+  background:var(--panel);
+  border:1.5px solid var(--bdr);
+  border-radius:10px;padding:7px 9px;
+}
+.ci-card.ci-unify{border-color:rgba(240,180,41,.42);}
+.ci-card.ci-mgr  {border-color:rgba(157,154,248,.45);}
+.ci-card.ci-ai   {border-color:rgba(157,154,248,.28);}
+.ci-card.ci-biz  {border-color:rgba(240,180,41,.28);}
+
+.ci-hdr{
+  display:flex;align-items:center;gap:7px;
+  margin-bottom:5px;padding-bottom:5px;
+  border-bottom:1px solid rgba(58,219,144,.1);
+}
+.ci-card.ci-unify .ci-hdr{border-bottom-color:rgba(240,180,41,.2);}
+.ci-card.ci-mgr   .ci-hdr{border-bottom-color:rgba(157,154,248,.2);}
+.ci-logo{height:16px;width:auto;object-fit:contain;}
+.ci-lbl{
+  font-family:'Space Mono',monospace;font-size:7.5px;
+  color:var(--white);letter-spacing:.1em;text-transform:uppercase;
+}
+.ci-card.ci-unify .ci-lbl{color:var(--gold);}
+.ci-card.ci-mgr   .ci-lbl{color:var(--lav);}
+
+.ci-cat-lbl{
+  font-family:'Space Mono',monospace;font-size:7.5px;
+  color:var(--faint);letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:5px;
+}
+.ci-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+
+.ci-sm{
+  font-family:'Space Mono',monospace;font-size:7.5px;
+  color:var(--dim);display:flex;align-items:center;gap:4px;
+}
+.ci-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;opacity:.7;}
+.ci-dot.g {background:var(--valley);}
+.ci-dot.go{background:var(--gold);}
+.ci-dot.l {background:var(--lav);}
+
+.logo-chip{
+  width:36px;height:27px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:6px;padding:3px;flex-shrink:0;
+}
+.logo-chip img{width:100%;height:100%;object-fit:contain;}
+
+.cbadge{
+  font-family:'Space Mono',monospace;font-size:7.5px;
+  padding:2px 8px;border-radius:100px;white-space:nowrap;
+  background:rgba(58,219,144,.07);color:var(--valley);
+  border:1px solid rgba(58,219,144,.22);
+}
+.cbadge.lav {background:rgba(157,154,248,.07);color:var(--lav); border-color:rgba(157,154,248,.22);}
+.cbadge.gold{background:rgba(240,180,41,.07); color:var(--gold);border-color:rgba(240,180,41,.22);}
+
+/* ── FOOTER ── */
+.eco-footer{
+  height:30px;flex-shrink:0;
+  display:flex;align-items:stretch;
+  background:rgba(7,26,28,.8);
+  border-top:1px solid rgba(58,219,144,.08);
+  z-index:30;overflow:hidden;
+}
+.ftr-zone{
+  display:flex;align-items:center;justify-content:center;
+  border-top:2px solid rgba(58,219,144,.3);
+}
+.ftr-zone.ftr-cloud{border-top-color:rgba(157,154,248,.3);}
+.ftr-lbl{
+  font-family:'Space Mono',monospace;font-size:8px;
+  color:var(--faint);letter-spacing:.25em;text-transform:uppercase;
+}
+.ftr-spacer{flex-shrink:0;background:transparent;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="eco-hdr">
+    <div class="eco-hdr-left">
+      <div class="eco-hdr-title">Litmus Cloud Ecosystem</div>
+      <div class="eco-hdr-sub">Enterprise / Cloud Example &nbsp;·&nbsp; Integrations and more available than listed</div>
+    </div>
+    <img src="Litmus_Logo_Reverse.png" class="eco-hdr-logo" alt="Litmus">
+  </div>
+
+  <!-- ══ MAIN DIAGRAM ══ -->
+  <div class="eco-main" id="ecoMain">
+
+    <!-- SVG arrows overlay -->
+    <svg class="arrows-svg" id="arrowsSvg">
+      <defs>
+        <!-- Unidirectional green (factory→edge) -->
+        <marker id="aGE" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+          <path d="M0,0L0,6L8,3z" fill="#3adb90"/>
+        </marker>
+        <!-- Bidirectional green -->
+        <marker id="bGE" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+          <path d="M0,0L0,6L8,3z" fill="#3adb90"/>
+        </marker>
+        <marker id="bGS" markerWidth="8" markerHeight="8" refX="1" refY="3" orient="auto">
+          <path d="M8,0L8,6L0,3z" fill="#3adb90"/>
+        </marker>
+        <!-- Bidirectional gold -->
+        <marker id="bGoE" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+          <path d="M0,0L0,6L8,3z" fill="#f0b429"/>
+        </marker>
+        <marker id="bGoS" markerWidth="8" markerHeight="8" refX="1" refY="3" orient="auto">
+          <path d="M8,0L8,6L0,3z" fill="#f0b429"/>
+        </marker>
+        <!-- Bidirectional lavender -->
+        <marker id="bLE" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+          <path d="M0,0L0,6L8,3z" fill="#9d9af8"/>
+        </marker>
+        <marker id="bLS" markerWidth="8" markerHeight="8" refX="1" refY="3" orient="auto">
+          <path d="M8,0L8,6L0,3z" fill="#9d9af8"/>
+        </marker>
+      </defs>
+
+      <!-- Factory ↔ Edge (bidirectional) -->
+      <path id="a_fac_edge" class="fl fg ani" marker-start="url(#bGS)" marker-end="url(#aGE)"/>
+
+      <!-- Edge ↔ Cloud Integrations box (single bidirectional) -->
+      <path id="a_edge_cloud" class="fl fg ani" marker-start="url(#bGS)" marker-end="url(#bGE)"/>
+    </svg>
+
+    <!-- Vertical dashed divider (positioned by JS) -->
+    <div class="vdivider" id="vDivider"></div>
+
+    <!-- ══ FACTORY BOX ══ -->
+    <div class="factory-box" id="factoryBox">
+      <div class="factory-hdr">Factory Floor</div>
+      <div class="factory-list">
+        <div class="factory-item"><span class="fi-icon">🖥️</span>PLC</div>
+        <div class="factory-item"><span class="fi-icon">⚙️</span>OPC</div>
+        <div class="factory-item"><span class="fi-icon">💾</span>Database</div>
+        <div class="factory-item"><span class="fi-icon">🤖</span>Robotics</div>
+        <div class="factory-item"><span class="fi-icon">📡</span>Sensors</div>
+        <div class="factory-item"><span class="fi-icon">📁</span>Files</div>
+        <div class="factory-item"><span class="fi-icon">🎛️</span>SCADA</div>
+        <div class="factory-item"><span class="fi-icon">📊</span>Historians</div>
+      </div>
+    </div>
+
+    <div class="arr-gap"></div>
+
+    <!-- ══ LITMUS EDGE ══ -->
+    <div class="edge-box" id="edgeBox">
+      <div class="edge-hdr">
+        <div class="edge-hdr-top">
+          <img src="Litmus_Logo_Reverse.png" class="edge-hdr-logo" alt="Litmus Edge">
+          <span class="edge-hdr-txt">Litmus Edge</span>
+        </div>
+        <div class="edge-deploy">
+          <span class="deploy-pill">VM</span>
+          <span class="deploy-pill">Docker</span>
+          <span class="deploy-pill">Bare Metal</span>
+        </div>
+      </div>
+      <div class="edge-body">
+        <div class="module-card">
+          <img src="device hub.png" class="module-img" alt="">
+          <span class="module-lbl">Device Hub</span>
+        </div>
+        <div class="module-card">
+          <img src="data hub.png" class="module-img" alt="">
+          <span class="module-lbl">Data Hub</span>
+        </div>
+        <div class="module-card">
+          <img src="analytics.png" class="module-img" alt="">
+          <span class="module-lbl">Analytics &amp; Visualization</span>
+        </div>
+        <div class="module-card">
+          <img src="digital-twin.png" class="module-img" alt="">
+          <span class="module-lbl">Data Model</span>
+        </div>
+        <div class="module-card">
+          <img src="integrations.png" class="module-img" alt="">
+          <span class="module-lbl">Integrations</span>
+        </div>
+        <div class="module-card">
+          <img src="docker.png" class="module-img" alt="">
+          <span class="module-lbl">App Marketplace</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flexible gap for divider line -->
+    <div class="flex-gap" id="flexGap"></div>
+
+    <!-- ══ CLOUD INTEGRATIONS COLUMN ══ -->
+    <div class="cloud-col" id="cloudCol">
+      <div class="cc-hdr">Cloud Integrations</div>
+      <div class="cc-body">
+
+      <!-- Litmus Unify -->
+      <div class="ci-card ci-unify" id="cc0">
+        <div class="ci-hdr">
+          <img src="new_integrations/litmus unify.png" class="ci-logo" alt="Litmus Unify">
+          <span class="ci-lbl">Litmus Unify</span><span style="font-family:'Space Mono',monospace;font-size:6.5px;color:var(--faint);letter-spacing:.08em;margin-left:5px;">(Edge deployment available)</span>
+        </div>
+        <div class="ci-row">
+          <span class="ci-sm"><span class="ci-dot go"></span>MQTT</span>
+          <span class="ci-sm"><span class="ci-dot go"></span>Data Hierarchy</span>
+          <span class="ci-sm"><span class="ci-dot go"></span>Normalization</span>
+          <span class="ci-sm"><span class="ci-dot go"></span>Data Governance</span>
+        </div>
+      </div>
+
+      <!-- Litmus Cloud Manager -->
+      <div class="ci-card ci-mgr" id="cc1">
+        <div class="ci-hdr">
+          <img src="Litmus_Logo_Reverse.png" class="ci-logo" alt="Cloud Manager">
+          <span class="ci-lbl">Litmus Cloud Manager</span>
+        </div>
+        <div class="ci-row">
+          <span class="ci-sm"><span class="ci-dot l"></span>Device Mgmt</span>
+          <span class="ci-sm"><span class="ci-dot l"></span>Data Mgmt</span>
+          <span class="ci-sm"><span class="ci-dot l"></span>App Orchestration</span>
+          <span class="ci-sm"><span class="ci-dot l"></span>ML Model Orch.</span>
+        </div>
+      </div>
+
+      <!-- Cloud Providers -->
+      <div class="ci-card" id="cc2">
+        <div class="ci-cat-lbl">Cloud Providers</div>
+        <div class="ci-row">
+          <div class="logo-chip"><img src="new_integrations/azure.png" alt="Azure"></div>
+          <div class="logo-chip"><img src="new_integrations/gcp.png" alt="Google Cloud"></div>
+          <div class="logo-chip"><img src="new_integrations/Amazon_Web_Services_Logo.svg.png" alt="AWS"></div>
+        </div>
+      </div>
+
+      <!-- Cloud Data Platforms -->
+      <div class="ci-card" id="cc3">
+        <div class="ci-cat-lbl">Cloud Data Platforms</div>
+        <div class="ci-row">
+          <div class="logo-chip"><img src="new_integrations/databricks.png" alt="Databricks"></div>
+          <div class="logo-chip"><img src="new_integrations/snowflake.png" alt="Snowflake"></div>
+        </div>
+      </div>
+
+      <!-- AI & ML -->
+      <div class="ci-card ci-ai" id="cc4">
+        <div class="ci-cat-lbl">AI &amp; ML</div>
+        <div class="ci-row">
+          <span class="cbadge lav">Claude + Copilot</span>
+          <span class="cbadge lav">OpenAI + Gemini</span>
+          <span class="cbadge lav">Vertex AI</span>
+          <span class="cbadge lav">Dataiku</span>
+        </div>
+      </div>
+
+      <!-- Business Applications -->
+      <div class="ci-card ci-biz" id="cc5">
+        <div class="ci-cat-lbl">Business Applications</div>
+        <div class="ci-row">
+          <span class="cbadge">Cognite</span>
+          <span class="cbadge">Power BI</span>
+          <span class="cbadge">Salesforce</span>
+          <span class="cbadge">MaintainX</span>
+          <span class="cbadge gold">SAP</span>
+        </div>
+      </div>
+
+      </div><!-- /cc-body -->
+    </div><!-- /cloud-col -->
+
+  </div><!-- /eco-main -->
+
+  <!-- ══ FOOTER ══ -->
+  <div class="eco-footer" id="ecoFooter">
+    <div class="ftr-zone" id="ftrEdge">
+      <span class="ftr-lbl">Edge</span>
+    </div>
+    <div class="ftr-spacer" id="ftrSpacer"></div>
+    <div class="ftr-zone ftr-cloud" id="ftrCloud">
+      <span class="ftr-lbl">Cloud</span>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+const svg = document.getElementById('arrowsSvg');
+
+function svgPt(x, y) {
+  const r = svg.getBoundingClientRect();
+  return { x: x - r.left, y: y - r.top };
+}
+function RC(el) {
+  const r = el.getBoundingClientRect();
+  return svgPt(r.right, (r.top + r.bottom) / 2);
+}
+function LC(el) {
+  const r = el.getBoundingClientRect();
+  return svgPt(r.left, (r.top + r.bottom) / 2);
+}
+function bez(a, b) {
+  const mx = (a.x + b.x) / 2;
+  return `M${a.x},${a.y} C${mx},${a.y} ${mx},${b.y} ${b.x},${b.y}`;
+}
+function sp(id, a, b) {
+  const el = document.getElementById(id);
+  if (el) el.setAttribute('d', bez(a, b));
+}
+
+function draw() {
+  const mainEl    = document.getElementById('ecoMain');
+  const factoryEl = document.getElementById('factoryBox');
+  const edgeEl    = document.getElementById('edgeBox');
+  const cloudEl   = document.getElementById('cloudCol');
+  const footerEl  = document.getElementById('ecoFooter');
+
+  // Arrow: factory → edge
+  sp('a_fac_edge', RC(factoryEl), LC(edgeEl));
+
+  // Single bidirectional arrow: edge ↔ cloud integrations box
+  sp('a_edge_cloud', RC(edgeEl), LC(cloudEl));
+
+  // Position vertical divider
+  const mainR  = mainEl.getBoundingClientRect();
+  const edgeR  = edgeEl.getBoundingClientRect();
+  const cloudR = cloudEl.getBoundingClientRect();
+  const divX   = (edgeR.right + cloudR.left) / 2 - mainR.left;
+  document.getElementById('vDivider').style.left = divX + 'px';
+
+  // Footer zone widths aligned to diagram columns
+  const footerR       = footerEl.getBoundingClientRect();
+  const edgeZoneW     = edgeR.right  - footerR.left;
+  const spacerW       = cloudR.left  - edgeR.right;
+  const cloudZoneW    = footerR.right - cloudR.left;
+
+  document.getElementById('ftrEdge').style.width   = edgeZoneW  + 'px';
+  document.getElementById('ftrSpacer').style.width = spacerW    + 'px';
+  document.getElementById('ftrCloud').style.width  = cloudZoneW + 'px';
+}
+
+function afterPaint(fn) { requestAnimationFrame(() => requestAnimationFrame(fn)); }
+window.addEventListener('load',   () => afterPaint(draw));
+window.addEventListener('resize', () => afterPaint(draw));
+</script>
+</body>
+</html>
